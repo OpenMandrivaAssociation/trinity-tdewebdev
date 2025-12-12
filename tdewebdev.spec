@@ -1,6 +1,5 @@
-#
-# Please submit bugfixes or comments via http://www.trinitydesktop.org/
-#
+%bcond clang 1
+%bcond tdefilereplace 0
 
 # BUILD WARNING:
 #  Remove qt-devel and qt3-devel and any kde*-devel on your system !
@@ -11,6 +10,8 @@
 %if "%{?tde_version}" == ""
 %define tde_version 14.1.5
 %endif
+%define pkg_rel 2
+
 %define tde_pkg tdewebdev
 %define tde_prefix /opt/trinity
 %define tde_bindir %{tde_prefix}/bin
@@ -24,30 +25,23 @@
 %define tde_tdeincludedir %{tde_includedir}/tde
 %define tde_tdelibdir %{tde_libdir}/trinity
 
-%if 0%{?mdkversion}
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
 %define _disable_rebuild_configure 1
-%endif
 
 # fixes error: Empty %files file …/debugsourcefiles.list
 %define _debugsource_template %{nil}
 
 %define tarball_name %{tde_pkg}-trinity
-%global toolchain %(readlink /usr/bin/cc)
 
 Name:		trinity-%{tde_pkg}
 Summary:	Web development applications
 Group:		Applications/Editors
 Version:	%{tde_version}
-Release:	%{?!preversion:1}%{?preversion:0_%{preversion}}%{?dist}
+Release:	%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
 URL:		http://www.trinitydesktop.org/
 
-%if 0%{?suse_version}
-License:	GPL-2.0+
-%else
 License:	GPLv2+
-%endif
 
 #Vendor:		Trinity Project
 #Packager:	Francois Andriot <francois.andriot@free.fr>
@@ -61,29 +55,30 @@ Source1:		%{name}-rpmlintrc
 BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
 BuildRequires:	trinity-tdesdk-devel >= %{tde_version}
 
-BuildRequires:	cmake make
+BuildSystem:	  cmake
+BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
+BuildOption:    -DCMAKE_CXX_FLAGS="${RPM_OPT_FLAGS} -DFORCE_DEBUGGER -DWITH_DEBUGGER"
+BuildOption:    -DCMAKE_SKIP_RPATH=OFF
+BuildOption:    -DCMAKE_SKIP_INSTALL_RPATH=OFF
+BuildOption:    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
+BuildOption:    -DCMAKE_INSTALL_RPATH="%{tde_libdir}"
+BuildOption:    -DCMAKE_INSTALL_PREFIX="%{tde_prefix}"
+BuildOption:    -DBIN_INSTALL_DIR="%{tde_bindir}"
+BuildOption:    -DDOC_INSTALL_DIR="%{tde_docdir}"
+BuildOption:    -DINCLUDE_INSTALL_DIR="%{tde_tdeincludedir}"
+BuildOption:    -DLIB_INSTALL_DIR="%{tde_libdir}"
+BuildOption:    -DPKGCONFIG_INSTALL_DIR="%{tde_libdir}/pkgconfig"
+BuildOption:    -DSYSCONF_INSTALL_DIR="%{_sysconfdir}/trinity"
+BuildOption:    -DSHARE_INSTALL_PREFIX="%{tde_datadir}"
+BuildOption:    -DWITH_ALL_OPTIONS=ON -DWITH_QUANTA_CVSSERVICE=OFF
+BuildOption:    -DBUILD_ALL=ON
+
 BuildRequires:	desktop-file-utils
-%if "%{?toolchain}" != "clang"
-BuildRequires:	gcc-c++
-%endif
 
-# SUSE desktop files utility
-%if 0%{?suse_version}
-BuildRequires:	update-desktop-files
-%endif
-
-%if 0%{?opensuse_bs} && 0%{?suse_version}
-# for xdg-menu script
-BuildRequires:	brp-check-trinity
-%endif
+%{!?with_clang:BuildRequires:	gcc-c++}
 
 # XSLT support
 BuildRequires:  pkgconfig(libxslt)
-
-%if 0%{?rhel} == 4
-# a bogus dep in libexslt.la file from EL-4 (WONTFIX bug http://bugzilla.redhat.com/142241)
-BuildRequires:	libgcrypt-devel
-%endif
 
 # PERL support
 BuildRequires:	perl
@@ -91,19 +86,11 @@ BuildRequires:	perl
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xrender)
 
-# KXSLDBG requires libxml2
-#if 0%{?mgaversion} || 0%{?mdkversion} || 0%{?rhel} >= 5 || ( 0%{?fedora} > 0 && %{?fedora} <= 17 ) || 0%{?suse_version}
-#define build_kxsldbg 1
-#BuildRequires:	pkgconfig(libxml-2.0)
-#endif
-
 # ICU support
 BuildRequires:  pkgconfig(icu-i18n)
 
 # Readline support
 BuildRequires:	readline-devel
-
-%define build_tdefilereplace 0
 
 Obsoletes:	trinity-kdewebdev-libs < %{?epoch:%{epoch}:}%{version}-%{release}
 Provides:	trinity-kdewebdev-libs = %{?epoch:%{epoch}:}%{version}-%{release}
@@ -115,7 +102,6 @@ Requires: trinity-quanta-data = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires: trinity-kimagemapeditor = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires: trinity-klinkstatus = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires: trinity-kommander = %{?epoch:%{epoch}:}%{version}-%{release}
-# %{?build_kxsldbg:Requires: trinity-kxsldbg = %{?epoch:%{epoch}:}%{version}-%{release}}
 
 %description
 Web development applications, including:
@@ -123,7 +109,6 @@ Web development applications, including:
 * klinkstatus: link checker
 * kommander: visual dialog building tool
 * quanta+: web development
-# %{?build_kxsldbg:* kxsldbg: xslt Debugger}
 
 %files
 %defattr(-,root,root,-)
@@ -138,7 +123,6 @@ Requires:	trinity-klinkstatus = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires:	trinity-kommander = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires:	trinity-quanta-data = %{?epoch:%{epoch}:}%{version}-%{release}
 #Requires:	trinity-kimagemapeditor = %{?epoch:%{epoch}:}%{version}-%{release}
-#Requires:	trinity-kxsldbg = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires:	tidy
 
 %description -n trinity-quanta
@@ -338,54 +322,7 @@ This package is part of TDE, as a component of the TDE web development module.
 
 ##########
 
-# %if 0%{?build_kxsldbg}
-
-# %package -n trinity-kxsldbg
-# Summary:	graphical XSLT debugger for TDE [Trinity]
-# Group:		Applications/Development
-
-# %description -n trinity-kxsldbg
-# KXSLDbg is a debugger for XSLT scripts. It includes a graphical user
-# interface as well as a text-based debugger. KXSLDbg can be run as a
-# standalone application or as an embedded TDE part.
-
-# XSLT is an XML language for defining transformations of XML files from
-# XML to some other arbitrary format, such as XML, HTML, plain text, etc.,
-# using standard XSLT stylesheets.
-
-# This package is part of TDE, as a component of the TDE web development module.
-
-# %files -n trinity-kxsldbg
-# %defattr(-,root,root,-)
-# %{tde_bindir}/kxsldbg
-# %{tde_bindir}/xsldbg
-# %{tde_tdelibdir}/libkxsldbgpart.la
-# %{tde_tdelibdir}/libkxsldbgpart.so
-# %{tde_tdeappdir}/kxsldbg.desktop
-# %{tde_datadir}/applnk/.hidden/xsldbg.desktop
-# %{tde_datadir}/apps/kxsldbg/
-# %{tde_datadir}/apps/kxsldbgpart/
-# %{tde_tdedocdir}/HTML/en/kxsldbg/
-# %{tde_tdedocdir}/HTML/en/xsldbg/
-# %{tde_datadir}/icons/hicolor/*/actions/1downarrow.png
-# %{tde_datadir}/icons/hicolor/*/actions/configure.png
-# %{tde_datadir}/icons/hicolor/*/actions/system-log-out.png
-# %{tde_datadir}/icons/hicolor/*/actions/system-run.png
-# %{tde_datadir}/icons/hicolor/*/actions/hash.png
-# %{tde_datadir}/icons/hicolor/*/actions/mark.png
-# %{tde_datadir}/icons/hicolor/*/actions/next.png
-# %{tde_datadir}/icons/hicolor/*/actions/step.png
-# %{tde_datadir}/icons/hicolor/*/actions/xsldbg_*.png
-# %{tde_datadir}/icons/hicolor/*/apps/kxsldbg.png
-# %{tde_datadir}/icons/locolor/*/apps/kxsldbg.png
-# %{tde_datadir}/services/kxsldbg_part.desktop
-# %{tde_mandir}/man1/kxsldbg.1*
-
-# %endif
-
-##########
-
-%if 0%{?build_tdefilereplace}
+%if %{with tdefilereplace}
 
 %package -n trinity-tdefilereplace
 Summary:	Batch search-and-replace component for TDE
@@ -437,73 +374,19 @@ Requires:	trinity-kommander-devel = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files devel
 
-##########
 
-%if 0%{?suse_version} && 0%{?opensuse_bs} == 0
-%debug_package
+%prep -a
+%if %{without kxsldbg}
+%__rm -rf kxsldbg/ doc/kxsldbg/ doc/xsldbg/
 %endif
 
-##########
 
-%prep
-%autosetup -p1 -n %{tarball_name}-%{version}%{?preversion:~%{preversion}}
-
-# %if 0%{?build_kxsldbg} == 0
-# %__rm -rf kxsldbg/ doc/kxsldbg/ doc/xsldbg/
-# %endif
-
-
-%build
+%conf -p
 unset QTDIR QTLIB QTINC
 export PATH="%{tde_bindir}:${PATH}"
 
-# if ! rpm -E %%cmake|grep -e 'cd build\|cd ${CMAKE_BUILD_DIR:-build}'; then
-#   %__mkdir_p build
-#   cd build
-# fi
 
-%cmake \
-  -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-  -DCMAKE_C_FLAGS="${RPM_OPT_FLAGS}" \
-  -DCMAKE_CXX_FLAGS="${RPM_OPT_FLAGS} -DFORCE_DEBUGGER -DWITH_DEBUGGER" \
-  -DCMAKE_SKIP_RPATH=OFF \
-  -DCMAKE_SKIP_INSTALL_RPATH=OFF \
-  -DCMAKE_INSTALL_RPATH="%{tde_libdir}" \
-  -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DWITH_GCC_VISIBILITY=OFF \
-  \
-  -DCMAKE_INSTALL_PREFIX="%{tde_prefix}" \
-  -DBIN_INSTALL_DIR="%{tde_bindir}" \
-  -DDOC_INSTALL_DIR="%{tde_docdir}" \
-  -DINCLUDE_INSTALL_DIR="%{tde_tdeincludedir}" \
-  -DLIB_INSTALL_DIR="%{tde_libdir}" \
-  -DPKGCONFIG_INSTALL_DIR="%{tde_libdir}/pkgconfig" \
-  -DSYSCONF_INSTALL_DIR="%{_sysconfdir}/trinity" \
-  -DSHARE_INSTALL_PREFIX="%{tde_datadir}" \
-  \
-  -DWITH_ALL_OPTIONS=ON \
-  -DWITH_QUANTA_CVSSERVICE=OFF \
-  \
-  -DBUILD_ALL=ON \
-  \
-  ..
-
-# Strange cmake behaviour under rhel6
-%if 0%{?rhel} == 6
-grep -rl "CXX_FLAGS.*\"-O2" | while read file; do
-  sed -i "${file}" -e "s|\"||g"
-done
-%endif
-
-%__make %{?_smp_mflags} || %__make
-
-
-%install
-export PATH="%{tde_bindir}:${PATH}"
-%__rm -rf %{?buildroot}
-%__make install DESTDIR=%{?buildroot} -C build
-
-
+%install -a
 ## nothing handles the extraction of the sources provided in the 
 ## packaging directory
 ## package separately?  Why doesn't upstream include this? -- Rex
@@ -517,21 +400,6 @@ export PATH="%{tde_bindir}:${PATH}"
 #    rm -rf $i
 # done
 # cp -a php php.docrc %{buildroot}%{tde_datadir}/apps/quanta/doc/
-
-# Updates applications categories for openSUSE
-%if 0%{?suse_version}
-%suse_update_desktop_file -r klinkstatus      Office WebDevelopment
-%if 0%{?build_kxsldbg}
-%suse_update_desktop_file -r kxsldbg          Office WebDevelopment
-%endif
-%suse_update_desktop_file -r kimagemapeditor  Office WebDevelopment
-%suse_update_desktop_file    kmdr-editor      Development GUIDesigner
-%suse_update_desktop_file    kmdr-executor    Development GUIDesigner
-%suse_update_desktop_file -r quanta           Office WebDevelopment
-%if 0%{?build_tdefilereplace}
-%suse_update_desktop_file -r tdefilereplace   System      FileManager
-%endif
-%endif
 
 # Adds missing icons in 'hicolor' theme
 %__mkdir_p %{buildroot}%{tde_datadir}/icons/hicolor/{16x16,22x22,32x32,48x48,64x64,128x128}/apps/
