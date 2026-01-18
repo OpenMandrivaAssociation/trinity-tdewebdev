@@ -14,16 +14,7 @@
 
 %define tde_pkg tdewebdev
 %define tde_prefix /opt/trinity
-%define tde_bindir %{tde_prefix}/bin
-%define tde_datadir %{tde_prefix}/share
-%define tde_docdir %{tde_datadir}/doc
-%define tde_includedir %{tde_prefix}/include
-%define tde_libdir %{tde_prefix}/%{_lib}
-%define tde_mandir %{tde_datadir}/man
-%define tde_tdeappdir %{tde_datadir}/applications/tde
-%define tde_tdedocdir %{tde_docdir}/tde
-%define tde_tdeincludedir %{tde_includedir}/tde
-%define tde_tdelibdir %{tde_libdir}/trinity
+
 
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
@@ -43,10 +34,6 @@ URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
 
-#Vendor:		Trinity Project
-#Packager:	Francois Andriot <francois.andriot@free.fr>
-
-Prefix:		%{tde_prefix}
 
 Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{tde_version}%{?preversion:~%{preversion}}.tar.xz
 
@@ -57,21 +44,15 @@ BuildRequires:	trinity-tdesdk-devel >= %{tde_version}
 
 BuildSystem:	  cmake
 BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
-BuildOption:    -DCMAKE_CXX_FLAGS="${RPM_OPT_FLAGS} -DFORCE_DEBUGGER -DWITH_DEBUGGER"
-BuildOption:    -DCMAKE_SKIP_RPATH=OFF
-BuildOption:    -DCMAKE_SKIP_INSTALL_RPATH=OFF
-BuildOption:    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
-BuildOption:    -DCMAKE_INSTALL_RPATH="%{tde_libdir}"
-BuildOption:    -DCMAKE_INSTALL_PREFIX="%{tde_prefix}"
-BuildOption:    -DBIN_INSTALL_DIR="%{tde_bindir}"
-BuildOption:    -DDOC_INSTALL_DIR="%{tde_docdir}"
-BuildOption:    -DINCLUDE_INSTALL_DIR="%{tde_tdeincludedir}"
-BuildOption:    -DLIB_INSTALL_DIR="%{tde_libdir}"
-BuildOption:    -DPKGCONFIG_INSTALL_DIR="%{tde_libdir}/pkgconfig"
-BuildOption:    -DSYSCONF_INSTALL_DIR="%{_sysconfdir}/trinity"
-BuildOption:    -DSHARE_INSTALL_PREFIX="%{tde_datadir}"
+BuildOption:    -DCMAKE_INSTALL_PREFIX=%{tde_prefix}
+BuildOption:    -DDOC_INSTALL_DIR=%{tde_prefix}/share/doc
+BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_prefix}/include/tde
+BuildOption:    -DPKGCONFIG_INSTALL_DIR=%{tde_prefix}/%{_lib}/pkgconfig
+BuildOption:    -DSYSCONF_INSTALL_DIR=%{_sysconfdir}/trinity
+BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_prefix}/share
 BuildOption:    -DWITH_ALL_OPTIONS=ON -DWITH_QUANTA_CVSSERVICE=OFF
 BuildOption:    -DBUILD_ALL=ON
+BuildOption:    -DWITH_GCC_VISIBILITY=%{!?with_clang:ON}%{?with_clang:OFF}
 
 BuildRequires:	desktop-file-utils
 
@@ -143,21 +124,21 @@ This package is part of TDE, as a component of the TDE web development module.
 
 %files -n trinity-quanta
 %defattr(-,root,root,-)
-%{tde_bindir}/quanta
-%{tde_tdelibdir}/quantadebuggerdbgp.la
-%{tde_tdelibdir}/quantadebuggerdbgp.so
-%{tde_tdelibdir}/quantadebuggergubed.la
-%{tde_tdelibdir}/quantadebuggergubed.so
-%{tde_tdeappdir}/quanta.desktop
-%{tde_datadir}/apps/kafkapart
-%{tde_datadir}/icons/hicolor/*/apps/quanta.png
-%{tde_datadir}/mimelnk/application/x-webprj.desktop
-%{tde_datadir}/services/quantadebuggerdbgp.desktop
-%{tde_datadir}/services/quantadebuggergubed.desktop
-%{tde_datadir}/services/quanta_preview_config.desktop
-%{tde_datadir}/servicetypes/quantadebugger.desktop
-%{tde_tdedocdir}/HTML/en/quanta/
-%{tde_mandir}/man1/quanta.1*
+%{tde_prefix}/bin/quanta
+%{tde_prefix}/%{_lib}/trinity/quantadebuggerdbgp.la
+%{tde_prefix}/%{_lib}/trinity/quantadebuggerdbgp.so
+%{tde_prefix}/%{_lib}/trinity/quantadebuggergubed.la
+%{tde_prefix}/%{_lib}/trinity/quantadebuggergubed.so
+%{tde_prefix}/share/applications/tde/quanta.desktop
+%{tde_prefix}/share/apps/kafkapart
+%{tde_prefix}/share/icons/hicolor/*/apps/quanta.png
+%{tde_prefix}/share/mimelnk/application/x-webprj.desktop
+%{tde_prefix}/share/services/quantadebuggerdbgp.desktop
+%{tde_prefix}/share/services/quantadebuggergubed.desktop
+%{tde_prefix}/share/services/quanta_preview_config.desktop
+%{tde_prefix}/share/servicetypes/quantadebugger.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/quanta/
+%{tde_prefix}/share/man/man1/quanta.1*
 
 ##########
 
@@ -176,7 +157,7 @@ This package is part of TDE, as a component of the TDE web development module.
 
 %files -n trinity-quanta-data
 %defattr(-,root,root,-)
-%{tde_datadir}/apps/quanta/
+%{tde_prefix}/share/apps/quanta/
 
 ##########
 
@@ -193,16 +174,16 @@ This package is part of TDE, as a component of the TDE web development module.
 
 %files -n trinity-kimagemapeditor
 %defattr(-,root,root,-)
-%{tde_bindir}/kimagemapeditor
-%{tde_tdelibdir}/libkimagemapeditor.la
-%{tde_tdelibdir}/libkimagemapeditor.so
-%{tde_tdeappdir}/kimagemapeditor.desktop
-%{tde_datadir}/apps/kimagemapeditor/
-%{tde_datadir}/icons/hicolor/*/apps/kimagemapeditor.png
-%{tde_datadir}/icons/locolor/*/apps/kimagemapeditor.png
-%{tde_datadir}/services/kimagemapeditorpart.desktop
-%{tde_tdedocdir}/HTML/en/kimagemapeditor/
-%{tde_mandir}/man1/kimagemapeditor.1*
+%{tde_prefix}/bin/kimagemapeditor
+%{tde_prefix}/%{_lib}/trinity/libkimagemapeditor.la
+%{tde_prefix}/%{_lib}/trinity/libkimagemapeditor.so
+%{tde_prefix}/share/applications/tde/kimagemapeditor.desktop
+%{tde_prefix}/share/apps/kimagemapeditor/
+%{tde_prefix}/share/icons/hicolor/*/apps/kimagemapeditor.png
+%{tde_prefix}/share/icons/locolor/*/apps/kimagemapeditor.png
+%{tde_prefix}/share/services/kimagemapeditorpart.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/kimagemapeditor/
+%{tde_prefix}/share/man/man1/kimagemapeditor.1*
 
 ##########
 
@@ -222,17 +203,17 @@ This package is part of TDE, as a component of the TDE web development module.
 
 %files -n trinity-klinkstatus
 %defattr(-,root,root,-)
-%{tde_bindir}/klinkstatus
-%{tde_tdelibdir}/libklinkstatuspart.la
-%{tde_tdelibdir}/libklinkstatuspart.so
-%{tde_tdeappdir}/klinkstatus.desktop
-%{tde_datadir}/apps/klinkstatus/
-%{tde_datadir}/apps/klinkstatuspart/
-%{tde_datadir}/config.kcfg/klinkstatus.kcfg
-%{tde_datadir}/icons/hicolor/*/apps/klinkstatus.png
-%{tde_datadir}/services/klinkstatus_part.desktop
-%{tde_tdedocdir}/HTML/en/klinkstatus/
-%{tde_mandir}/man1/klinkstatus.1*
+%{tde_prefix}/bin/klinkstatus
+%{tde_prefix}/%{_lib}/trinity/libklinkstatuspart.la
+%{tde_prefix}/%{_lib}/trinity/libklinkstatuspart.so
+%{tde_prefix}/share/applications/tde/klinkstatus.desktop
+%{tde_prefix}/share/apps/klinkstatus/
+%{tde_prefix}/share/apps/klinkstatuspart/
+%{tde_prefix}/share/config.kcfg/klinkstatus.kcfg
+%{tde_prefix}/share/icons/hicolor/*/apps/klinkstatus.png
+%{tde_prefix}/share/services/klinkstatus_part.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/klinkstatus/
+%{tde_prefix}/share/man/man1/klinkstatus.1*
 
 ##########
 
@@ -264,32 +245,32 @@ This package is part of TDE, as a component of the TDE web development module.
 
 %files -n trinity-kommander
 %defattr(-,root,root,-)
-%{tde_bindir}/kmdr-editor
-%{tde_bindir}/kmdr-executor
-%{tde_bindir}/kmdr-plugins
-%{tde_libdir}/libkommanderplugin.so.*
-%{tde_libdir}/libkommanderwidgets.la
-%{tde_libdir}/libkommanderwidget.so.*
-%{tde_libdir}/libkommanderwidgets.so.*
-%{tde_tdeappdir}/kmdr-editor.desktop
-%{tde_datadir}/applnk/.hidden/kmdr-executor.desktop
-%{tde_datadir}/apps/katepart/syntax/kommander.xml
-%{tde_tdedocdir}/HTML/en/kommander/
-%{tde_datadir}/icons/crystalsvg/*/apps/kommander.png
-%{tde_datadir}/icons/hicolor/*/apps/kommander.png
-%{tde_datadir}/mimelnk/application/x-kommander.desktop
-%{tde_tdelibdir}/libkommander_part.so
-%{tde_tdelibdir}/libkommander_part.la
-%{tde_datadir}/apps/kommander/
-%{tde_datadir}/apps/kmdr-editor/
-%{tde_datadir}/apps/katepart/syntax/kommander-new.xml
-%{tde_datadir}/apps/tdevappwizard/
-%{tde_datadir}/services/kommander_part.desktop
-%{tde_mandir}/man1/extractkmdr.1*
-%{tde_mandir}/man1/kmdr-editor.1*
-%{tde_mandir}/man1/kmdr-executor.1*
-%{tde_mandir}/man1/kmdr-plugins.1*
-%{tde_mandir}/man1/kmdr2po.1*
+%{tde_prefix}/bin/kmdr-editor
+%{tde_prefix}/bin/kmdr-executor
+%{tde_prefix}/bin/kmdr-plugins
+%{tde_prefix}/%{_lib}/libkommanderplugin.so.*
+%{tde_prefix}/%{_lib}/libkommanderwidgets.la
+%{tde_prefix}/%{_lib}/libkommanderwidget.so.*
+%{tde_prefix}/%{_lib}/libkommanderwidgets.so.*
+%{tde_prefix}/share/applications/tde/kmdr-editor.desktop
+%{tde_prefix}/share/applnk/.hidden/kmdr-executor.desktop
+%{tde_prefix}/share/apps/katepart/syntax/kommander.xml
+%{tde_prefix}/share/doc/tde/HTML/en/kommander/
+%{tde_prefix}/share/icons/crystalsvg/*/apps/kommander.png
+%{tde_prefix}/share/icons/hicolor/*/apps/kommander.png
+%{tde_prefix}/share/mimelnk/application/x-kommander.desktop
+%{tde_prefix}/%{_lib}/trinity/libkommander_part.so
+%{tde_prefix}/%{_lib}/trinity/libkommander_part.la
+%{tde_prefix}/share/apps/kommander/
+%{tde_prefix}/share/apps/kmdr-editor/
+%{tde_prefix}/share/apps/katepart/syntax/kommander-new.xml
+%{tde_prefix}/share/apps/tdevappwizard/
+%{tde_prefix}/share/services/kommander_part.desktop
+%{tde_prefix}/share/man/man1/extractkmdr.1*
+%{tde_prefix}/share/man/man1/kmdr-editor.1*
+%{tde_prefix}/share/man/man1/kmdr-executor.1*
+%{tde_prefix}/share/man/man1/kmdr-plugins.1*
+%{tde_prefix}/share/man/man1/kmdr2po.1*
 
 ##########
 
@@ -312,13 +293,13 @@ This package is part of TDE, as a component of the TDE web development module.
 
 %files -n trinity-kommander-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkommanderplugin.la
-%{tde_libdir}/libkommanderplugin.so
-%{tde_libdir}/libkommanderwidget.la
-%{tde_libdir}/libkommanderwidget.so
-%{tde_libdir}/libkommanderwidgets.so
-%{tde_tdeincludedir}/kommander*
-%{tde_tdeincludedir}/specials.h
+%{tde_prefix}/%{_lib}/libkommanderplugin.la
+%{tde_prefix}/%{_lib}/libkommanderplugin.so
+%{tde_prefix}/%{_lib}/libkommanderwidget.la
+%{tde_prefix}/%{_lib}/libkommanderwidget.so
+%{tde_prefix}/%{_lib}/libkommanderwidgets.so
+%{tde_prefix}/include/tde/kommander*
+%{tde_prefix}/include/tde/specials.h
 
 ##########
 
@@ -343,16 +324,16 @@ This package is part of Trinity, as a component of the TDE utilities module.
 
 %files -n trinity-tdefilereplace
 %defattr(-,root,root,-)
-%{tde_bindir}/tdefilereplace
-%{tde_tdelibdir}/libtdefilereplacepart.la
-%{tde_tdelibdir}/libtdefilereplacepart.so
-%{tde_tdeappdir}/tdefilereplace.desktop
-%{tde_datadir}/apps/tdefilereplace/
-%{tde_datadir}/apps/tdefilereplacepart/
-%{tde_tdedocdir}/HTML/en/tdefilereplace/
-%{tde_datadir}/icons/hicolor/*/apps/tdefilereplace.png
-%{tde_datadir}/services/tdefilereplacepart.desktop
-%{tde_mandir}/man1/tdefilereplace.1*
+%{tde_prefix}/bin/tdefilereplace
+%{tde_prefix}/%{_lib}/trinity/libtdefilereplacepart.la
+%{tde_prefix}/%{_lib}/trinity/libtdefilereplacepart.so
+%{tde_prefix}/share/applications/tde/tdefilereplace.desktop
+%{tde_prefix}/share/apps/tdefilereplace/
+%{tde_prefix}/share/apps/tdefilereplacepart/
+%{tde_prefix}/share/doc/tde/HTML/en/tdefilereplace/
+%{tde_prefix}/share/icons/hicolor/*/apps/tdefilereplace.png
+%{tde_prefix}/share/services/tdefilereplacepart.desktop
+%{tde_prefix}/share/man/man1/tdefilereplace.1*
 
 %endif
 
@@ -383,7 +364,7 @@ Requires:	trinity-kommander-devel = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %conf -p
 unset QTDIR QTLIB QTINC
-export PATH="%{tde_bindir}:${PATH}"
+export PATH="%{tde_prefix}/bin:${PATH}"
 
 
 %install -a
@@ -394,19 +375,19 @@ export PATH="%{tde_bindir}:${PATH}"
 # for i in css html javascript ; do
 #    pushd $i
 #    ./install.sh <<EOF
-# %{buildroot}%{tde_datadir}/apps/quanta/doc
+# %{buildroot}%{tde_prefix}/share/apps/quanta/doc
 # EOF
 #    popd
 #    rm -rf $i
 # done
-# cp -a php php.docrc %{buildroot}%{tde_datadir}/apps/quanta/doc/
+# cp -a php php.docrc %{buildroot}%{tde_prefix}/share/apps/quanta/doc/
 
 # Adds missing icons in 'hicolor' theme
-%__mkdir_p %{buildroot}%{tde_datadir}/icons/hicolor/{16x16,22x22,32x32,48x48,64x64,128x128}/apps/
-pushd %{buildroot}%{tde_datadir}/icons
+%__mkdir_p %{buildroot}%{tde_prefix}/share/icons/hicolor/{16x16,22x22,32x32,48x48,64x64,128x128}/apps/
+pushd %{buildroot}%{tde_prefix}/share/icons
 for i in {16,22,32,64,128}; do %__cp crystalsvg/"$i"x"$i"/apps/kommander.png  hicolor/"$i"x"$i"/apps/kommander.png  ;done
 popd
 
 # Unwanted icon
-%__rm -f "%{buildroot}%{tde_datadir}/icons/crystalsvg/16x16/actions/bug.png"
+%__rm -f "%{buildroot}%{tde_prefix}/share/icons/crystalsvg/16x16/actions/bug.png"
 
