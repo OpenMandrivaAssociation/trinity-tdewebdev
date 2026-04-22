@@ -35,6 +35,7 @@ Source1:		%{name}-rpmlintrc
 
 BuildRequires:	trinity-tdelibs-devel >= %{version}
 BuildRequires:	trinity-tdesdk-devel >= %{version}
+BuildRequires:  trinity-tde-cmake
 
 BuildSystem:	  cmake
 BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
