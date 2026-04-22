@@ -6,12 +6,6 @@
 #  Having KDE libraries may cause FTBFS here !
 
 # TDE variables
-%define tde_epoch 2
-%if "%{?tde_version}" == ""
-%define tde_version 14.1.5
-%endif
-%define pkg_rel 2
-
 %define tde_pkg tdewebdev
 %define tde_prefix /opt/trinity
 
@@ -28,19 +22,19 @@
 Name:		trinity-%{tde_pkg}
 Summary:	Web development applications
 Group:		Applications/Editors
-Version:	%{tde_version}
-Release:	%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
+Version:	14.1.5
+Release:	3
 URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
 
 
-Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{tde_version}%{?preversion:~%{preversion}}.tar.xz
+Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{version}/main/core/%{tarball_name}-%{version}.tar.xz
 
 Source1:		%{name}-rpmlintrc
 
-BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
-BuildRequires:	trinity-tdesdk-devel >= %{tde_version}
+BuildRequires:	trinity-tdelibs-devel >= %{version}
+BuildRequires:	trinity-tdesdk-devel >= %{version}
 
 BuildSystem:	  cmake
 BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
@@ -73,16 +67,16 @@ BuildRequires:  pkgconfig(icu-i18n)
 # Readline support
 BuildRequires:	readline-devel
 
-Obsoletes:	trinity-kdewebdev-libs < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kdewebdev-libs = %{?epoch:%{epoch}:}%{version}-%{release}
-Obsoletes:	trinity-kdewebdev < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kdewebdev = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-kdewebdev-libs < %{EVRD}
+Provides:	trinity-kdewebdev-libs = %{EVRD}
+Obsoletes:	trinity-kdewebdev < %{EVRD}
+Provides:	trinity-kdewebdev = %{EVRD}
 
-Requires: trinity-quanta = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-quanta-data = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kimagemapeditor = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-klinkstatus = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires: trinity-kommander = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires: trinity-quanta = %{EVRD}
+Requires: trinity-quanta-data = %{EVRD}
+Requires: trinity-kimagemapeditor = %{EVRD}
+Requires: trinity-klinkstatus = %{EVRD}
+Requires: trinity-kommander = %{EVRD}
 
 %description
 Web development applications, including:
@@ -100,10 +94,10 @@ Web development applications, including:
 Summary:	web development environment for TDE [Trinity]
 Group:		Applications/Development
 Requires:	trinity-tdefilereplace
-Requires:	trinity-klinkstatus = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kommander = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-quanta-data = %{?epoch:%{epoch}:}%{version}-%{release}
-#Requires:	trinity-kimagemapeditor = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-klinkstatus = %{EVRD}
+Requires:	trinity-kommander = %{EVRD}
+Requires:	trinity-quanta-data = %{EVRD}
+#Requires:	trinity-kimagemapeditor = %{EVRD}
 Requires:	tidy
 
 %description -n trinity-quanta
@@ -277,7 +271,7 @@ This package is part of TDE, as a component of the TDE web development module.
 %package -n trinity-kommander-devel
 Summary:	development files for Kommander [Trinity]
 Group:		Development/Libraries
-Requires:	trinity-kommander = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-kommander = %{EVRD}
 
 %description -n trinity-kommander-devel
 This package contains the headers and other development files for
@@ -309,8 +303,8 @@ This package is part of TDE, as a component of the TDE web development module.
 Summary:	Batch search-and-replace component for TDE
 Group:		Applications/Utilities
 
-Obsoletes:	trinity-kfilereplace < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kfilereplace = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-kfilereplace < %{EVRD}
+Provides:	trinity-kfilereplace = %{EVRD}
 
 %description -n trinity-tdefilereplace
 TDEFileReplace is an embedded component for TDE that acts as a batch
@@ -343,12 +337,12 @@ This package is part of Trinity, as a component of the TDE utilities module.
 Group: Development/Libraries
 Summary:	Header files and documentation for %{name} 
 
-Obsoletes:	trinity-kdewebdev-devel < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kdewebdev-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-kdewebdev-devel < %{EVRD}
+Provides:	trinity-kdewebdev-devel = %{EVRD}
 
-Requires:	trinity-tdelibs-devel >= %{tde_version}
-Requires:	%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kommander-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-tdelibs-devel >= %{version}
+Requires:	%{name} = %{EVRD}
+Requires:	trinity-kommander-devel = %{EVRD}
 
 %description devel
 %{summary}.
