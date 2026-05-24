@@ -9,21 +9,20 @@
 %define tde_pkg tdewebdev
 %define tde_prefix /opt/trinity
 
-
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
 %define _disable_rebuild_configure 1
 
 # fixes error: Empty %files file …/debugsourcefiles.list
-%define _debugsource_template %{nil}
+%undefine _debugsource_template
 
 %define tarball_name %{tde_pkg}-trinity
 
 Name:		trinity-%{tde_pkg}
 Summary:	Web development applications
 Group:		Applications/Editors
-Version:	14.1.5
-Release:	3
+Version:	14.1.6
+Release:	1
 URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
@@ -35,7 +34,7 @@ Source1:		%{name}-rpmlintrc
 
 BuildRequires:	trinity-tdelibs-devel >= %{version}
 BuildRequires:	trinity-tdesdk-devel >= %{version}
-BuildRequires:  trinity-tde-cmake
+BuildRequires:  trinity-tde-cmake >= %{version}
 
 BuildSystem:	  cmake
 BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
